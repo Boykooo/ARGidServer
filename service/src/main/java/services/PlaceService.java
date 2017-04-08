@@ -17,7 +17,6 @@ public class PlaceService {
         JSONObject main = api.getDataByPlaceId(placeId);
 
         String response = main.getJSONObject("result").getString("name");
-        //Charset.forName(response).encode("\"UTF-8\"");
 
         return new PlaceDto(response);
     }
