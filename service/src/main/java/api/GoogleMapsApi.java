@@ -20,23 +20,21 @@ public class GoogleMapsApi {
         this.apiKey = "AIzaSyC3fnZHLCy56uTgIpOgkpSRSFzqzEO8GEM";
         this.baseRadarRequest = "https://maps.googleapis.com/maps/api/place/radarsearch/json?";
         this.basePlaceInfoRequest = "https://maps.googleapis.com/maps/api/place/details/json?";
-        this.searchRadius = 30;
+        this.searchRadius = 15;
         //this.parser = new JsonParser();
     }
 
-    public JSONObject getDataFromCrd(float lat, float lon) {
+    public JSONObject getDataFromCrd(String lat, String lon) throws Exception {
         String request = MessageFormat.format(baseRadarRequest +
-                "&location={0},{1}&radius={1}&types=point_of_interest&key={2}", lat, lon, searchRadius, this.apiKey);
-        JSONObject main = new JSONObject(request);
-        return main;
+                "location={0},{1}&radius={2}&types=point_of_interest&key={3}", lat, lon, searchRadius, this.apiKey);
+        return new JSONObject(getJsonFromUrl(request));
     }
 
     public JSONObject getDataByPlaceId(String placeId) throws Exception {
         String request = MessageFormat.format(basePlaceInfoRequest +
                 "placeid={0}&language=ru&key={1}", placeId, this.apiKey);
 
-        JSONObject main = new JSONObject(getJsonFromUrl(request));
-        return main;
+        return new JSONObject(getJsonFromUrl(request));
     }
 
     public void changeSearchRadius(Integer searchRadius) {
@@ -46,7 +44,7 @@ public class GoogleMapsApi {
     private String getJsonFromUrl(String request) throws Exception {
         URL url = new URL(request);
 
-        String encoding = System.getProperty("console.encoding", "utf-8");
+        String encoding = System.getProperty("console.encoding", "utf-8"); // for russian chars
 
         Scanner scan = new Scanner(url.openStream(), encoding);
         StringBuilder sb = new StringBuilder();

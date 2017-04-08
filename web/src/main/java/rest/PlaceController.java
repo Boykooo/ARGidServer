@@ -14,11 +14,16 @@ import javax.ws.rs.core.Response;
 public class PlaceController {
 
     @EJB
-    private PlaceService api;
+    private PlaceService service;
 
     @GET
     @Path("/{placeid}")
     public Response getByPlaceId(@PathParam("placeid") String placeid) throws Exception {
-        return Response.ok(api.findPlaceByPlaceId(placeid)).build();
+        return Response.ok(service.findPlaceByPlaceId(placeid)).build();
+    }
+
+    @GET
+    public Response getAllByLocation(@QueryParam("lat") String lat, @QueryParam("lng") String lng) throws Exception {
+        return Response.ok(service.findPlaceByCrd(lat, lng)).build();
     }
 }
