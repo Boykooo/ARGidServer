@@ -16,6 +16,8 @@ public class PlaceService {
     @EJB
     private GoogleMapsApi api;
 
+    private Double movementCoef;
+
     public PlaceDto findPlaceByPlaceId(String placeId) throws Exception {
         JSONObject main = api.getDataByPlaceId(placeId);
 

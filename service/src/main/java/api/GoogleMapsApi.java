@@ -20,7 +20,7 @@ public class GoogleMapsApi {
         this.apiKey = "AIzaSyC3fnZHLCy56uTgIpOgkpSRSFzqzEO8GEM";
         this.baseRadarRequest = "https://maps.googleapis.com/maps/api/place/radarsearch/json?";
         this.basePlaceInfoRequest = "https://maps.googleapis.com/maps/api/place/details/json?";
-        this.searchRadius = 15;
+        this.searchRadius = 30;
         //this.parser = new JsonParser();
     }
 
