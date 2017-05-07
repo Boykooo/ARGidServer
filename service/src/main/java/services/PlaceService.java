@@ -4,6 +4,7 @@ import api.GoogleMapsApi;
 import dto.PlaceDto;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import util.ApiConst;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -30,20 +31,52 @@ public class PlaceService {
         return new PlaceDto(name, address, type, lat, lng);
     }
 
-    public List<PlaceDto> findPlaceByCrd(String lat, String lng) throws Exception {
+    public List<PlaceDto> findPlacesByCrd(String lat, String lng) throws Exception {
+        return findPlacesByIds(findPlacesIdByCrd(lat, lng));
+    }
+
+    public List<PlaceDto> findPlacesByAzimuth(String lat, String lng, String azimuth) throws Exception {
+        List<String> ids = new ArrayList<>();
+        double newLat = Double.valueOf(lat);
+        double newLng = Double.valueOf(lng);
+        double azim = Double.valueOf(azimuth);
+        int iter = 0; // количество проходов
+
+        while ((ids == null || ids.size() == 0) && iter < 20) {
+
+            double displacement = Math.cos(azim) * ApiConst.DISPLACEMENT_COEF;
+
+            newLat = newLat + displacement;
+            newLng = newLng + displacement;
+
+            ids = findPlacesIdByCrd(String.valueOf(newLat), String.valueOf(newLng));
+
+            iter++;
+        }
+
+        return findPlacesByIds(ids);
+    }
+
+    private List<String> findPlacesIdByCrd(String lat, String lng) throws Exception {
         JSONObject main = api.getDataFromCrd(lat, lng);
-        List<PlaceDto> places = new ArrayList<>();
-
-        if (main.getString("status").equals("OK"))
-        {
-            List<String> placeIDs = new ArrayList<>();
+        if (main.getString("status").equals("OK")) {
             JSONArray results = main.getJSONArray("results");
-
-            for (int i = 0; i < results.length(); i++) {
-                placeIDs.add(results.getJSONObject(i).getString("place_id"));
+            if (results.length() > 0) {
+                List<String> placeIDs = new ArrayList<>();
+                for (int i = 0; i < results.length(); i++) {
+                    placeIDs.add(results.getJSONObject(i).getString("place_id"));
+                }
+                return placeIDs;
             }
+        }
+        return null;
+    }
 
-            placeIDs.forEach(
+    private List<PlaceDto> findPlacesByIds(List<String> ids) {
+        if (ids != null) {
+            List<PlaceDto> places = new ArrayList<>();
+
+            ids.forEach(
                     (String id) -> {
                         try {
                             places.add(findPlaceByPlaceId(id));
@@ -52,10 +85,8 @@ public class PlaceService {
                         }
                     }
             );
+            return places;
         }
-
-
-        return places;
+        return null;
     }
-
 }

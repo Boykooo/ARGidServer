@@ -24,6 +24,13 @@ public class PlaceController {
 
     @GET
     public Response getAllByLocation(@QueryParam("lat") String lat, @QueryParam("lng") String lng) throws Exception {
-        return Response.ok(service.findPlaceByCrd(lat, lng)).build();
+        return Response.ok(service.findPlacesByCrd(lat, lng)).build();
+    }
+
+    @GET
+    public Response getAllByAzimuth(@QueryParam("lat") String lat,
+                                    @QueryParam("lng") String lng,
+                                    @QueryParam("azimuth") String azimuth) throws Exception {
+        return Response.ok(service.findPlacesByAzimuth(lat, lng, azimuth)).build();
     }
 }

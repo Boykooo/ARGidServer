@@ -1,7 +1,7 @@
 package api;
 
 import org.json.JSONObject;
-import staticClasses.ApiConst;
+import util.ApiConst;
 
 import javax.ejb.Stateless;
 import java.net.URL;

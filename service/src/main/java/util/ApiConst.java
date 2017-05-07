@@ -1,4 +1,4 @@
-package staticClasses;
+package util;
 
 public final class ApiConst {
     public final static String API_KEY = "AIzaSyC3fnZHLCy56uTgIpOgkpSRSFzqzEO8GEM";
