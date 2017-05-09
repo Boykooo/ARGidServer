@@ -22,11 +22,11 @@ public class PlaceService {
     public PlaceDto findPlaceByPlaceId(String placeId) throws Exception {
         JSONObject main = api.getDataByPlaceId(placeId);
 
-        String name = main.getJSONObject("result").getString("name");
-        String address = main.getJSONObject("result").getString("formatted_address");
-        String type = main.getJSONObject("result").getJSONArray("types").get(0).toString();
-        Double lat = main.getJSONObject("result").getJSONObject("geometry").getJSONObject("location").getDouble("lat");
-        Double lng = main.getJSONObject("result").getJSONObject("geometry").getJSONObject("location").getDouble("lng");
+        String name = main.getString("name");
+        String address = main.getString("formatted_address");
+        String type = main.getJSONArray("types").get(0).toString();
+        Double lat = main.getJSONObject("geometry").getJSONObject("location").getDouble("lat");
+        Double lng = main.getJSONObject("geometry").getJSONObject("location").getDouble("lng");
 
         return new PlaceDto(name, address, type, lat, lng);
     }
@@ -36,15 +36,44 @@ public class PlaceService {
     }
 
     public List<PlaceDto> findPlacesByAzimuth(String lat, String lng, String azimuth) throws Exception {
-        List<String> ids = new ArrayList<>();
         double newLat = Double.valueOf(lat);
         double newLng = Double.valueOf(lng);
         double azim = Double.valueOf(azimuth);
+        double displacement = Math.cos(azim) * ApiConst.DISPLACEMENT_COEF;
         int iter = 0; // количество проходов
 
-        while ((ids == null || ids.size() == 0) && iter < 20) {
+//        List<String> ids = findPlacesIdByCrd(String.valueOf(newLat), String.valueOf(newLng));
+//        boolean inCurrentBuilding = ids != null;
+//        if (inCurrentBuilding) {
+//            String currentPlaceId = findPlacesIdByCrd(String.valueOf(newLat), String.valueOf(newLng)).get(0);
+//            while (inCurrentBuilding && iter < 5) {
+//
+//                newLat = newLat + displacement;
+//                newLng = newLng + displacement;
+//                ids = findPlacesIdByCrd(lat, lng);
+//
+//                if (ids != null) {
+//
+//                    boolean foundCurrBuilding = false;
+//
+//                    for (int i = 0; i < ids.size() && !foundCurrBuilding; i++) {
+//                        foundCurrBuilding = ids.get(i).equals(currentPlaceId);
+//                    }
+//
+//                    inCurrentBuilding = foundCurrBuilding;
+//
+//                } else {
+//                    inCurrentBuilding = false;
+//                }
+//
+//                iter++;
+//            }
+//        }
 
-            double displacement = Math.cos(azim) * ApiConst.DISPLACEMENT_COEF;
+
+        List<String> ids = new ArrayList<>();
+        iter = 0;
+        while ((ids == null || ids.size() == 0) && iter < 8) {
 
             newLat = newLat + displacement;
             newLng = newLng + displacement;
